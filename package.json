@@ -1,7 +1,7 @@
 {
-  "name": "cti-color-picker",
+  "name": "cti-color-slider",
   "version": "1.0.0",
-  "description": "Minimalistic, mobile touch friendly color picker angular directive",
+  "description": "Minimalistic, mobile touch friendly color slider angular directive",
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
     "angular",
     "mobile",
     "color",
-    "picker",
+    "slider",
     "directive"
   ],
   "author": "",

@@ -58,13 +58,13 @@
       var ctx0 = cv0.getContext('2d');
       var ctx1 = cv1.getContext('2d');
       var specColorStops = [
-        [0, 'rgba(255,0,0,1)'],
-        [0.15, 'rgba(255,0,255,1)'],
-        [0.33, 'rgba(0,0,255,1)'],
-        [0.49, 'rgba(0,255,255,1)'],
-        [0.67, 'rgba(0,255,0,1)'],
-        [0.84, 'rgba(255,255,0,1)'],
-        [1, 'rgba(255,0,0,1)']
+        [0, 'rgb(255,0,0)'],
+        [1/6, 'rgb(255,0,255)'],
+        [2/6, 'rgb(0,0,255)'],
+        [3/6, 'rgb(0,255,255)'],
+        [4/6, 'rgb(0,255,0)'],
+        [5/6, 'rgb(255,255,0)'],
+        [1, 'rgb(255,0,0)']
       ];
       var colorData = cs.colorData || {
         cv0_x: getRandomInt(0, csWidth),
@@ -78,28 +78,29 @@
        * Color slider interface initialization
        */
       renderGradientSlider(ctx1, csWidth, csHeight, specColorStops);
-      var specRgba = getCanvasRgba(ctx1, colorData.cv1_x, 1);
-      renderGradientSlider(ctx0, csWidth, csHeight, grdColorStops(specRgba));
+      var specRgb = getCanvasRgb(ctx1, colorData.cv1_x, 1);
+      renderGradientSlider(ctx0, csWidth, csHeight, grdColorStops(specRgb));
       picker0.style.top = cv0.offsetTop - pickerRadius+2 + 'px';
       picker1.style.top = cv1.offsetTop - pickerRadius+2 + 'px';
-      updatePickerPos(picker0, absX(cv0, colorData.cv0_x));
-      updatePickerPos(picker1, absX(cv1, colorData.cv1_x));
-      colorData.rgba = colorData.rgba ||
-        getCanvasRgba(ctx0, colorData.cv0_x, 1);
-      displayColor(colorData.rgba);
+      var rgb = getCanvasRgb(ctx0, colorData.cv0_x, 1);
+      updatePicker(picker0, absX(cv0, colorData.cv0_x), rgb);
+      updatePicker(picker1, absX(cv1, colorData.cv1_x), specRgb);
+      colorData.rgb = colorData.rgb ||
+        getCanvasRgb(ctx0, colorData.cv0_x, 1);
+      displayColor(colorData.rgb);
 
       function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       }
 
-      function getCanvasRgba(ctx, cvX, cvY) {
+      function getCanvasRgb(ctx, cvX, cvY) {
         var pixel = ctx.getImageData(cvX, cvY, 1, 1);
         var data = pixel.data;
-        return 'rgba('+data[0]+','+data[1]+','+data[2]+','+data[3]+')';
+        return 'rgb('+data[0]+','+data[1]+','+data[2]+')';
       }
 
-      function grdColorStops(rgba) {
-        return [[0, 'rgba(0,0,0,1)'], [0.5, rgba], [1, 'rgba(255,255,255,1)']];
+      function grdColorStops(rgb) {
+        return [[0, 'rgb(0,0,0)'], [0.5, rgb], [1, 'rgb(255,255,255)']];
       }
 
       // createLinearGradient(x1, y1, x2, y2)
@@ -112,10 +113,11 @@
         ctx.fillStyle = grd;
         ctx.fillRect(0, 0, width, height)
       }
-      function updatePickerPos(picker, x) {
+      function updatePicker(picker, x, rgb) {
         picker.style.left = x - pickerRadius + 'px';
+        picker.style.background = rgb;
       }
-      function displayColor(rgba) { colorDisplay.style.background = rgba; }
+      function displayColor(rgb) { colorDisplay.style.background = rgb; }
       /**
        * Turn absolute screen x to canvas relative x
        * @param {Canvas} canvas canvas element
@@ -150,42 +152,32 @@
 
       function grdSliderEvent(e) {
         var x = bound(cv0, e.center.x, 'offsetLeft', 'offsetRight');
-        updatePickerPos(picker0, x);
         var canvasX = cvX(cv0, x);
-        var rgba = getCanvasRgba(ctx0, canvasX, 1);
-        displayColor(rgba);
+        var rgb = getCanvasRgb(ctx0, canvasX, 1);
+        updatePicker(picker0, x, rgb);
+        displayColor(rgb);
         if (e.isFinal) {
           colorData.cv0_x = canvasX;
-          colorData.rgba = rgba;
+          colorData.rgb = rgb;
+          colorData.hex = rgbToHex(rgb);
         }
       }
 
       function specSliderEvent(e) {
         var x = bound(cv1, e.center.x, 'offsetLeft', 'offsetRight');
-        updatePickerPos(picker1, x);
         var canvasX = cvX(cv1, x);
-        var colorStops = grdColorStops(getCanvasRgba(ctx1, canvasX, 1));
-        renderGradientSlider(ctx0, csWidth, csHeight, colorStops);
-        var rgba = getCanvasRgba(ctx0, colorData.cv0_x, 1);
-        displayColor(rgba);
+        var specRgb = getCanvasRgb(ctx1, canvasX, 1);
+        updatePicker(picker1, x, specRgb);
+        renderGradientSlider(ctx0, csWidth, csHeight, grdColorStops(specRgb));
+        var rgb = getCanvasRgb(ctx0, colorData.cv0_x, 1);
+        picker0.style.background = rgb;
+        displayColor(rgb);
         if (e.isFinal) {
           colorData.cv1_x = canvasX;
-          colorData.rgba = rgba;
+          colorData.rgb = rgb;
+          colorData.hex = rgbToHex(rgb);
         }
       }
-
-      // function sliderEvents(e, canvas, cId, ctx, picker) {
-      //   var x = bound(canvas, e.center.x, 'offsetLeft', 'offsetRight');
-      //   updatePickerPos(picker, x);
-      //   var canvasX = cvX(canvas, x);
-      //   var rgba = getCanvasRgba(ctx, canvasX, 1);
-      //   displayColor(rgba);
-      //   if (e.isFinal) {
-      //     if (cId) colorData.cv1_x = canvasX; // if cId is 1;
-      //     else colorData.cv0_x = canvasX; // if cId is 0;
-      //     colorData.rgba = rgba;
-      //   }
-      // }
 
       function csHandleSlider(e) {
         if (e.type == 'tap') console.log(e);
@@ -203,6 +195,18 @@
           default:
             return;
         }
+      }
+
+      function rgbToHex(rgbStr) {
+        var c = rgb.slice(0, -1).substr(rgb.indexOf('(')+1).split(',');
+        return toHex(c[0])+toHex(c[1])+toHex(c[2]);
+      }
+
+      function toHex(n) {
+        var hexVals = '0123456789ABCDEF';
+        if (isNaN(n)) return '00';
+        n = Math.max(0, Math.min(n, 255));
+        return hexVals.charAt((n-n%16)/16) + hexVals.charAt(n%16);
       }
 
     } // link

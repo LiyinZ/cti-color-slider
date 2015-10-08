@@ -1,5 +1,5 @@
 {
-  "name": "ctiColorPicker",
+  "name": "ctiColorSlider",
   "version": "0.0.1",
   "dependencies": {
     "angular": ">=1.2.0",
@@ -9,13 +9,13 @@
   "authors": [
     "Liyin Zhang <slevinz@outlook.com>"
   ],
-  "description": "Minimalistic, mobile touch friendly color picker angular directive",
-  "main": "dist/ctiColorPicker.js",
+  "description": "Minimalistic, mobile touch friendly color slider angular directive",
+  "main": "dist/ctiColorSlider.js",
   "keywords": [
     "angular",
     "directive",
     "color",
-    "picker",
+    "slider",
     "minimal"
   ],
   "license": "MIT",
