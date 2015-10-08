@@ -1,0 +1,35 @@
+{
+  "name": "ctiColorPicker",
+  "version": "0.0.1",
+  "dependencies": {
+    "angular": ">=1.2.0",
+    "hammerjs": ">=2.0.0"
+  },
+  "devDependencies": {},
+  "authors": [
+    "Liyin Zhang <slevinz@outlook.com>"
+  ],
+  "description": "Minimalistic, mobile touch friendly color picker angular directive",
+  "main": "dist/ctiColorPicker.js",
+  "keywords": [
+    "angular",
+    "directive",
+    "color",
+    "picker",
+    "minimal"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "demo",
+    "node_modules",
+    "src",
+    "test",
+    "test_client",
+    "tests",
+    "gulpfile.js",
+    "package.json"
+  ],
+  "moduleType": []
+}

@@ -1,0 +1,32 @@
+[cti-color-slider] {
+  /* modify to change width of color slider, responsive possible */
+  width: 320px;
+  margin: auto;
+}
+
+.cti-slider-wrapper {
+  /* top, bottom 20+20 = 40px is the minimum recommended size for touch */
+  padding: 20px 0;
+  width: 100%;
+  display: table;
+}
+
+.cti-canvas-slider {
+  width: 100%; /* width relative to container */
+  height: 5px; /* modify to change height of slider */
+  display: table-cell;
+  vertical-align: middle;
+}
+.round-edge {
+  border-radius: 5px;
+}
+
+.cti-cs-picker {
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  border: 2px solid #fff;
+}
+.circular {
+  border-radius: 50%;
+}

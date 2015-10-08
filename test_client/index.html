@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="ctiCpDemo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>CTi Color Slider demo</title>
+  <link href="dist/ctiColorSlider.css" rel="stylesheet">
+  <link href="test_client/client.css" rel="stylesheet">
+</head>
+<body ng-controller="MainCtrl as main">
+  <div class="cs-color-display"
+       id="cs-color-display"
+       ng-click="main.logData()"
+  >
+  </div>
+  <div cti-color-slider="main.colorData"></div>
+  <!-- bower:js -->
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/hammerjs/hammer.js"></script>
+  <!-- endbower -->
+  <script src="dist/ctiColorSlider.js"></script>
+  <script src="test_client/app.js"></script>
+</body>
+</html>
+
