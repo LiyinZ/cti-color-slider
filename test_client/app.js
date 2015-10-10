@@ -5,16 +5,16 @@
 
   demo.controller('MainCtrl', MainCtrl);
 
-  MainCtrl.$inject = [];
+  MainCtrl.$inject = ['$scope'];
 
   /* @ngInject */
-  function MainCtrl() {
+  function MainCtrl($scope) {
     var vm = this;
 
-    // vm.colorData = '#FFF062';
+    vm.colorData = { hex: '#FFF062' };
 
     vm.logData = function() {
-      console.log(vm.colorData);
+      console.log(vm.colorData.hex);
     };
 
   }
