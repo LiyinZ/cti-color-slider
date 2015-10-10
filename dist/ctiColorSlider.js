@@ -66,28 +66,72 @@
         [5/6, 'rgb(255,255,0)'],
         [1, 'rgb(255,0,0)']
       ];
-      var colorData = cs.colorData || {
-        cv0_x: getRandomInt(0, csWidth),
-        cv1_x: getRandomInt(0, csWidth)
-      };
+      var csData = { color: cs.colorData };
       cv0.width = cv1.width = csWidth; // slider width defined by container width
       cv0.height = cv1.height = csHeight;
       cv0.offsetRight = cv0.offsetLeft + cv0.width;
       cv1.offsetRight = cv1.offsetLeft + cv1.width;
+
+      var hexToR = hexToFn(0, 2);
+      var hexToG = hexToFn(2, 4);
+      var hexToB = hexToFn(4, 6);
       /**
        * Color slider interface initialization
        */
-      renderGradientSlider(ctx1, csWidth, csHeight, specColorStops);
-      var specRgb = getCanvasRgb(ctx1, colorData.cv1_x, 1);
-      renderGradientSlider(ctx0, csWidth, csHeight, grdColorStops(specRgb));
-      picker0.style.top = cv0.offsetTop - pickerRadius+2 + 'px';
-      picker1.style.top = cv1.offsetTop - pickerRadius+2 + 'px';
-      var rgb = getCanvasRgb(ctx0, colorData.cv0_x, 1);
-      updatePicker(picker0, absX(cv0, colorData.cv0_x), rgb);
-      updatePicker(picker1, absX(cv1, colorData.cv1_x), specRgb);
-      colorData.rgb = colorData.rgb ||
-        getCanvasRgb(ctx0, colorData.cv0_x, 1);
-      displayColor(colorData.rgb);
+      initSlider(cs.color);
+
+      function hexToFn(a, b) {
+        return function(h) { return parseInt(h.substring(a, b), 16); }
+      }
+      function cutHex(h) {
+        return (h.charAt(0) == "#") ? h.substring(1,7) : h;
+      }
+
+      function hexToRgb(hex) {
+        hex = cutHex(hex);
+        return [hexToR(hex), hexToG(hex), hexToB(hex)];
+      }
+
+      function rgbToHex(R, G, B, sign) {
+        var hex = toHex(R)+toHex(G)+toHex(B);
+        if (sign) hex = '#' + hex;
+        console.log(hex);
+        return hex;
+      }
+
+      function toHex(n) {
+        var hexVals = '0123456789ABCDEF';
+        if (isNaN(n)) return '00';
+        n = Math.max(0, Math.min(n, 255));
+        return hexVals.charAt((n-n%16)/16) + hexVals.charAt(n%16);
+      }
+
+
+      function initSlider(colorData) {
+        renderGradientSlider(ctx1, csWidth, csHeight, specColorStops);
+        picker0.style.top = cv0.offsetTop - pickerRadius+2 + 'px';
+        picker1.style.top = cv1.offsetTop - pickerRadius+2 + 'px';
+        if (csData.color) { // decode color positions
+          var rgb = hexToRgb(csData.color);
+          var ratios = rgbToSlidersRatio(rgb);
+          csData.x1 = ratioToPos(cv1, ratios[1]);
+          csData.x0 = ratioToPos(cv0, ratios[0]);
+        } else { // random slider posistions
+          csData.x1 = getRandomInt(0, cv1.width);
+          csData.x0 = getRandomInt(0, cv0.width);
+        }
+        var specRgb = rgbToStr(getCanvasRgb(ctx1, csData.x1, 1));
+        renderGradientSlider(ctx0, csWidth, csHeight, grdColorStops(specRgb));
+        var rgbStr = csData.color;
+        if (!csData.color) {
+          var rgb = getCanvasRgb(ctx0, csData.x0, 1);
+          var rgbStr = rgbToStr(rgb);
+          csData.color = rgbToHex(rgb[0], rgb[1], rgb[2], true);
+        }
+        updatePicker(picker0, absX(cv0, csData.x0), rgbStr);
+        updatePicker(picker1, absX(cv1, csData.x1), specRgb);
+        displayColor(csData.color);
+      }
 
       function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -95,8 +139,12 @@
 
       function getCanvasRgb(ctx, cvX, cvY) {
         var pixel = ctx.getImageData(cvX, cvY, 1, 1);
-        var data = pixel.data;
-        return 'rgb('+data[0]+','+data[1]+','+data[2]+')';
+        var data = pixel.data.slice(0, -1);
+        return data;
+      }
+
+      function rgbToStr(rgb) {
+        return 'rgb(' + rgb.join(',') + ')';
       }
 
       function grdColorStops(rgb) {
@@ -111,7 +159,7 @@
           grd.addColorStop(stop[0], stop[1]);
         });
         ctx.fillStyle = grd;
-        ctx.fillRect(0, 0, width, height)
+        ctx.fillRect(0, 0, width, height);
       }
       function updatePicker(picker, x, rgb) {
         picker.style.left = x - pickerRadius + 'px';
@@ -144,6 +192,39 @@
         return coord;
       }
 
+      function ratioToPos(canvas, ratio) {
+        return canvas, Math.round(ratio * canvas.width);
+      }
+
+      // return [brightness, spectrum]
+      function rgbToSlidersRatio(rgb) {
+        function isBlack(element) { return element === 0; }
+        function isWhite(element) { return element === 255; }
+        if (rgb.every(isBlack)) return [0, .5];
+        if (rgb.every(isWhite)) return [1, .5];
+        var max = Math.max.apply(null, rgb);
+        var min = Math.min.apply(null, rgb);
+        var mid = rgb.reduce(function(a,b) { return a + b; }) - max - min;
+        var zone = spectrumZone(rgb);
+        if (max < 255 && min === 0) {
+          if (zone % 2) return [max/255/2, (zone + (1-mid/max)) / 6];
+          return [max/255/2, (zone + mid/max) / 6];
+        }
+        if (min > 0 && max === 255) {
+          if (zone % 2) return [.5+min/255/2, (zone+(255-mid)/(255-min))/6];
+          return [.5+min/255/2, (zone+(1-(255-mid)/(255-min)))/6];
+        }
+        return [.5, zone/6];
+      }
+      // helper function for rgbToSlidersRatio
+      function spectrumZone(rgb) {
+        if (rgb[0] > rgb[2] && rgb[2] >= rgb[1]) return 0;
+        if (rgb[2] >= rgb[0] && rgb[0] > rgb[1]) return 1;
+        if (rgb[2] > rgb[1] && rgb[1] >= rgb[0]) return 2;
+        if (rgb[1] >= rgb[2] && rgb[2] > rgb[0]) return 3;
+        if (rgb[1] > rgb[0] && rgb[0] >= rgb[2]) return 4;
+        return 5;
+      }
 
       // init touch events
       var hm = new Hammer(csContainer);
@@ -154,28 +235,28 @@
         var x = bound(cv0, e.center.x, 'offsetLeft', 'offsetRight');
         var canvasX = cvX(cv0, x);
         var rgb = getCanvasRgb(ctx0, canvasX, 1);
-        updatePicker(picker0, x, rgb);
-        displayColor(rgb);
+        var rgbStr = rgbToStr(rgb);
+        updatePicker(picker0, x, rgbStr);
+        displayColor(rgbStr);
         if (e.isFinal) {
-          colorData.cv0_x = canvasX;
-          colorData.rgb = rgb;
-          colorData.hex = rgbToHex(rgb);
+          csData.x0 = canvasX;
+          csData.color = rgbToHex(rgb[0], rgb[1], rgb[2]);
         }
       }
 
       function specSliderEvent(e) {
         var x = bound(cv1, e.center.x, 'offsetLeft', 'offsetRight');
         var canvasX = cvX(cv1, x);
-        var specRgb = getCanvasRgb(ctx1, canvasX, 1);
+        var specRgb = rgbToStr(getCanvasRgb(ctx1, canvasX, 1));
         updatePicker(picker1, x, specRgb);
         renderGradientSlider(ctx0, csWidth, csHeight, grdColorStops(specRgb));
-        var rgb = getCanvasRgb(ctx0, colorData.cv0_x, 1);
-        picker0.style.background = rgb;
-        displayColor(rgb);
+        var rgb = getCanvasRgb(ctx0, csData.x0, 1);
+        var rgbStr = rgbToStr(rgb);
+        picker0.style.background = rgbStr;
+        displayColor(rgbStr);
         if (e.isFinal) {
-          colorData.cv1_x = canvasX;
-          colorData.rgb = rgb;
-          colorData.hex = rgbToHex(rgb);
+          csData.x1 = canvasX;
+          csData.color = rgbToHex(rgb[0], rgb[1], rgb[2], true);
         }
       }
 
@@ -195,18 +276,6 @@
           default:
             return;
         }
-      }
-
-      function rgbToHex(rgbStr) {
-        var c = rgb.slice(0, -1).substr(rgb.indexOf('(')+1).split(',');
-        return toHex(c[0])+toHex(c[1])+toHex(c[2]);
-      }
-
-      function toHex(n) {
-        var hexVals = '0123456789ABCDEF';
-        if (isNaN(n)) return '00';
-        n = Math.max(0, Math.min(n, 255));
-        return hexVals.charAt((n-n%16)/16) + hexVals.charAt(n%16);
       }
 
     } // link
