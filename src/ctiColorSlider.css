@@ -1,5 +1,6 @@
 [cti-color-slider] {
   /* modify to change width of color slider, responsive possible */
+  position: relative;
   width: 320px;
   margin: auto;
 }
@@ -26,6 +27,8 @@
   height: 16px;
   width: 16px;
   border: 2px solid #fff;
+  opacity: 0;
+  transition: opacity .5s;
 }
 .circular {
   border-radius: 50%;

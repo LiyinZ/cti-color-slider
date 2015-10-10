@@ -88,6 +88,7 @@
         renderLinearGrdSlider(ctx1, csWidth, csHeight, specColorStops);
         picker0.style.top = cv0.offsetTop - pickerRadius+2 + 'px';
         picker1.style.top = cv1.offsetTop - pickerRadius+2 + 'px';
+        picker0.style.opacity = picker1.style.opacity = 1;
         updateSlider();
       }
 
