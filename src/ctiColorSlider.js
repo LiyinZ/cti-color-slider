@@ -188,7 +188,7 @@
        * @return {Integer} canvas pixel x position
        */
       function ratioToPos(canvas, ratio) {
-        return canvas, Math.round(ratio * canvas.width);
+        return Math.round(ratio * canvas.width);
       }
       // return [brightness, spectrum]
       function rgbToSlidersRatio(rgb) {
