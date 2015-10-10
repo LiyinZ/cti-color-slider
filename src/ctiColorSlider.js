@@ -65,45 +65,65 @@
         [5/6, 'rgb(255,255,0)'],
         [1, 'rgb(255,0,0)']
       ];
-      var csData = cs.colorData;
       var csCoords = {};
       cv0.width = cv1.width = csWidth; // slider width defined by container width
       cv0.height = cv1.height = csHeight;
       cv0.offsetRight = cv0.offsetLeft + cv0.width;
       cv1.offsetRight = cv1.offsetLeft + cv1.width;
-
       var hexToR = hexToFn(0, 2);
       var hexToG = hexToFn(2, 4);
       var hexToB = hexToFn(4, 6);
       /**
        * Color slider interface initialization
        */
-      initSlider();
+      angular.element(document).ready(function() {
+        initSlider();
+      });
+
+      scope.$watch('cs.colorData', function(newData) {
+        updateSlider();
+      });
 
       function initSlider() {
-        renderGradientSlider(ctx1, csWidth, csHeight, specColorStops);
+        renderLinearGrdSlider(ctx1, csWidth, csHeight, specColorStops);
         picker0.style.top = cv0.offsetTop - pickerRadius+2 + 'px';
         picker1.style.top = cv1.offsetTop - pickerRadius+2 + 'px';
-        if (csData.hex) { // decode color positions
-          var rgb = hexToRgb(csData.hex);
-          var ratios = rgbToSlidersRatio(rgb);
-          csCoords.x1 = ratioToPos(cv1, ratios[1]);
-          csCoords.x0 = ratioToPos(cv0, ratios[0]);
-        } else { // random slider posistions
-          csCoords.x1 = getRandomInt(0, cv1.width);
-          csCoords.x0 = getRandomInt(0, cv0.width);
-        }
-        var specRgb = rgbToStr(getCanvasRgb(ctx1, csCoords.x1, 1));
-        renderGradientSlider(ctx0, csWidth, csHeight, grdColorStops(specRgb));
-        var rgbStr = csData.hex;
-        if (!csData.hex) {
-          var rgb = getCanvasRgb(ctx0, csCoords.x0, 1);
-          var rgbStr = rgbToStr(rgb);
-          csData.hex = rgbToHex(rgb[0], rgb[1], rgb[2], true);
-        }
+        updateSlider();
+      }
+
+      function updateSlider() {
+        if (cs.colorData.hex) setSliderCoords(cs.colorData.hex);
+        else randSliderCoords();
+        var specRgb = renderBrightnessSlider(csCoords.x1);
+        var rgbStr = cs.colorData.hex || updateColorHex(csCoords.x0);
         updatePicker(picker0, absX(cv0, csCoords.x0), rgbStr);
         updatePicker(picker1, absX(cv1, csCoords.x1), specRgb);
-        displayColor(csData.hex);
+      }
+
+      function updateColorHex(x0) {
+        var rgb = getCanvasRgb(ctx0, x0, 1);
+        var rgbStr = rgbToStr(rgb);
+        cs.colorData.hex = rgbToHex(rgb[0], rgb[1], rgb[2], true);
+        return rgbStr;
+      }
+
+      function renderBrightnessSlider(x1) {
+        var specRgb = rgbToStr(getCanvasRgb(ctx1, x1, 1));
+        renderLinearGrdSlider(ctx0, csWidth, csHeight, grdColorStops(specRgb));
+        return specRgb;
+      }
+
+
+      function setSliderCoords(hex) {
+        var rgb = hexToRgb(hex);
+        var ratios = rgbToSlidersRatio(rgb);
+        csCoords.x1 = ratioToPos(cv1, ratios[1]);
+        csCoords.x0 = ratioToPos(cv0, ratios[0]);
+      }
+
+      function randSliderCoords() {
+        csCoords.x1 = getRandomInt(0, cv1.width);
+        csCoords.x0 = getRandomInt(0, cv0.width);
       }
 
       // hexToR, G, B function maker
@@ -151,7 +171,7 @@
       }
 
       // createLinearGradient(x1, y1, x2, y2)
-      function renderGradientSlider(ctx, width, height, colorStops) {
+      function renderLinearGrdSlider(ctx, width, height, colorStops) {
         var grd = ctx.createLinearGradient(0, 0, width, 0);
         ctx.clearRect(0, 0, width, height);
         colorStops.forEach(function(stop) {
@@ -160,9 +180,9 @@
         ctx.fillStyle = grd;
         ctx.fillRect(0, 0, width, height);
       }
-      function updatePicker(picker, x, rgb) {
+      function updatePicker(picker, x, rgbStr) {
         picker.style.left = x - pickerRadius + 'px';
-        picker.style.background = rgb;
+        picker.style.background = rgbStr;
       }
       function displayColor(color) { colorDisplay.style.background = color; }
       /**
@@ -241,30 +261,20 @@
       function grdSliderEvent(e) {
         var x = bound(cv0, e.center.x, 'offsetLeft', 'offsetRight');
         var canvasX = cvX(cv0, x);
-        var rgb = getCanvasRgb(ctx0, canvasX, 1);
-        var rgbStr = rgbToStr(rgb);
+        var rgbStr = updateColorHex(canvasX);
         updatePicker(picker0, x, rgbStr);
-        displayColor(rgbStr);
-        if (e.isFinal) {
-          csCoords.x0 = canvasX;
-          csData.hex = rgbToHex(rgb[0], rgb[1], rgb[2], true);
-        }
+        scope.$apply();
+        if (e.isFinal) csCoords.x0 = canvasX;
       }
 
       function specSliderEvent(e) {
         var x = bound(cv1, e.center.x, 'offsetLeft', 'offsetRight');
         var canvasX = cvX(cv1, x);
-        var specRgb = rgbToStr(getCanvasRgb(ctx1, canvasX, 1));
+        var specRgb = renderBrightnessSlider(canvasX);
         updatePicker(picker1, x, specRgb);
-        renderGradientSlider(ctx0, csWidth, csHeight, grdColorStops(specRgb));
-        var rgb = getCanvasRgb(ctx0, csCoords.x0, 1);
-        var rgbStr = rgbToStr(rgb);
-        picker0.style.background = rgbStr;
-        displayColor(rgbStr);
-        if (e.isFinal) {
-          csCoords.x1 = canvasX;
-          csData.hex = rgbToHex(rgb[0], rgb[1], rgb[2], true);
-        }
+        picker0.style.background = updateColorHex(csCoords.x0);
+        scope.$apply();
+        if (e.isFinal) csCoords.x1 = canvasX;
       }
 
       function csHandleSlider(e) {

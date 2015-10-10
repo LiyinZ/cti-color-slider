@@ -11,11 +11,17 @@
   function MainCtrl($scope) {
     var vm = this;
 
-    vm.colorData = { hex: '#FFF062' };
+    vm.colors = [
+      { hex: '#FFF062' },
+      { hex: '#00E594' },
+      { hex: '#7862FF' }
+    ];
 
-    vm.logData = function() {
-      console.log(vm.colorData.hex);
-    };
+    vm.colorData = vm.colors[0];
+
+    vm.selectColor = function(key) {
+      vm.colorData = vm.colors[key];
+    }
 
   }
 })();

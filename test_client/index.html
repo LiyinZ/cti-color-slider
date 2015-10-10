@@ -9,8 +9,9 @@
 </head>
 <body ng-controller="MainCtrl as main">
   <div class="cs-color-display"
-       id="cs-color-display"
-       ng-click="main.logData()"
+       ng-repeat="(key, color) in main.colors"
+       ng-style="{ background: color.hex }"
+       ng-click="main.selectColor(key)"
   >
   </div>
   <div cti-color-slider="main.colorData"></div>
