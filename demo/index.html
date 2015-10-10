@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="ctiCpDemo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>CTi Color Slider demo</title>
+  <script>function cdnizerLoad(u) {document.write('<scr'+'ipt src="'+encodeURIComponent(u)+'"></scr'+'ipt>');}</script><link href="dist/ctiColorSlider.css" rel="stylesheet">
+  <link href="demo/client.css" rel="stylesheet">
+</head>
+<body ng-controller="MainCtrl as main">
+  <div class="cs-color-display"
+       ng-repeat="(key, color) in main.colors"
+       ng-style="{ background: color.hex }"
+       ng-click="main.selectColor(key)"
+  >
+  </div>
+  <div cti-color-slider="main.colorData"></div>
+  <!-- bower:js -->
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script><script>if(!(window.angular)) cdnizerLoad("bower_components/angular/angular.js");</script>
+  <script src="//hammerjs.github.io/dist/hammer.min.js"></script>
+  <!-- endbower -->
+  <script src="dist/ctiColorSlider.js"></script>
+  <script src="demo/app.js"></script>
+</body>
+</html>
+

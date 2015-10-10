@@ -126,36 +126,6 @@
         csCoords.x0 = getRandomInt(0, cv0.width);
       }
 
-      // hexToR, G, B function maker
-      function hexToFn(a, b) {
-        return function(h) { return parseInt(h.substring(a, b), 16); }
-      }
-      function hexToRgb(hex) {
-        hex = cutHex(hex);
-        return [hexToR(hex), hexToG(hex), hexToB(hex)];
-      }
-      // hexToRgb helper
-      function cutHex(h) {
-        return (h.charAt(0) == "#") ? h.substring(1,7) : h;
-      }
-
-      function rgbToHex(R, G, B, sign) {
-        var hex = toHex(R)+toHex(G)+toHex(B);
-        if (sign) hex = '#' + hex;
-        return hex;
-      }
-      // rgbToHex helper
-      function toHex(n) {
-        var hexVals = '0123456789ABCDEF';
-        if (isNaN(n)) return '00';
-        n = Math.max(0, Math.min(n, 255));
-        return hexVals.charAt((n-n%16)/16) + hexVals.charAt(n%16);
-      }
-
-      function rgbToStr(rgb) {
-        return 'rgb(' + rgb.join(',') + ')';
-      }
-
       function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       }
@@ -251,6 +221,36 @@
         return 5;
       }
 
+      // hexToR, G, B function maker
+      function hexToFn(a, b) {
+        return function(h) { return parseInt(h.substring(a, b), 16); }
+      }
+      function hexToRgb(hex) {
+        hex = cutHex(hex);
+        return [hexToR(hex), hexToG(hex), hexToB(hex)];
+      }
+      // hexToRgb helper
+      function cutHex(h) {
+        return (h.charAt(0) == "#") ? h.substring(1,7) : h;
+      }
+
+      function rgbToHex(R, G, B, sign) {
+        var hex = toHex(R)+toHex(G)+toHex(B);
+        if (sign) hex = '#' + hex;
+        return hex;
+      }
+      // rgbToHex helper
+      function toHex(n) {
+        var hexVals = '0123456789ABCDEF';
+        if (isNaN(n)) return '00';
+        n = Math.max(0, Math.min(n, 255));
+        return hexVals.charAt((n-n%16)/16) + hexVals.charAt(n%16);
+      }
+
+      function rgbToStr(rgb) {
+        return 'rgb(' + rgb.join(',') + ')';
+      }
+
       /**
        * Init touch events
        */
@@ -278,7 +278,6 @@
       }
 
       function csHandleSlider(e) {
-        // if (e.type == 'tap') console.log(e);
         switch(e.target.id) {
           case 'cs-canvas-1':
           case 'cti-picker-1':
