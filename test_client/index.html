@@ -7,17 +7,23 @@
   <link href="dist/ctiColorSlider.css" rel="stylesheet">
   <link href="test_client/client.css" rel="stylesheet">
 </head>
-<body ng-controller="MainCtrl as main">
+<body ng-controller="MainCtrl as vm">
   <div class="app-container">
     <div class="cs-color-choices">
       <div class="cs-color-display"
-          ng-repeat="(key, color) in main.colors"
+          ng-repeat="(key, color) in vm.colors"
+          ng-class="{ 'cs-selected': vm.isSelected(key) }"
           ng-style="{ background: color.hex }"
-          ng-click="main.selectColor(key)" >
+          ng-click="vm.selectColor(key)" >
       </div>
     </div>
+    <div class="more-or-less">
+      <a class="btn-add" ng-click="vm.addColor()"
+                         ng-class="{ 'btn-disabled': vm.disableAdd }">+</a>
+      <a class="btn-remove">-</a>
+    </div>
     <div class="sliders-container">
-      <div cti-color-slider="main.colorData"></div>
+      <div cti-color-slider="vm.colorData"></div>
     </div>
   </div>
   <!-- bower:js -->

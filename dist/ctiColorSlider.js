@@ -46,7 +46,6 @@
        * Variables initialization
        */
       var type = 'useRgb' in attrs ? 'rgb' : 'hex';
-      console.log(type);
       var csContainer = element[0];
       var cv0 = csContainer.children[0].children[0];
       var cv1 = csContainer.children[1].children[0];
@@ -191,7 +190,7 @@
         var min = Math.min.apply(null, rgb);
         var mid = rgb.reduce(function(a,b) { return a + b; }) - max - min;
         var zone = spectrumZone(rgb);
-        if (max < t && min === 0) {
+        if (max <= t && min === 0) {
           if (zone % 2) return [max/t/2, (zone + (1-mid/max)) / 6];
           return [max/t/2, (zone + mid/max) / 6];
         }
@@ -208,7 +207,8 @@
         if (rgb[2] > rgb[1] && rgb[1] >= rgb[0]) return 2;
         if (rgb[1] >= rgb[2] && rgb[2] > rgb[0]) return 3;
         if (rgb[1] > rgb[0] && rgb[0] >= rgb[2]) return 4;
-        return 5;
+        if (rgb[0] >= rgb[1] && rgb[1] > rgb[2]) return 5;
+        return 6;
       }
 
       // hexToR, G, B function maker
