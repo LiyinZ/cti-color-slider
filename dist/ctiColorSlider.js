@@ -66,6 +66,7 @@
       ];
       var csCoords = {};
       cv0.height = cv1.height = csHeight; // this sets both canvas height
+      cv0.width = cv1.width = csWidth; // set canvas width, necessary
       cv0.offsetRight = cv0.offsetLeft + cv0.width;
       cv1.offsetRight = cv1.offsetLeft + cv1.width;
       var hexToR = hexToFn(0, 2);
@@ -95,8 +96,8 @@
         else randSliderCoords();
         var specRgb = renderBrightnessSlider(csCoords.x1);
         var rgbStr = cs.colorData.hex || updateColorHex(csCoords.x0);
-        updatePicker(picker0, absX(cv0, csCoords.x0), rgbStr);
-        updatePicker(picker1, absX(cv1, csCoords.x1), specRgb);
+        updatePicker(picker0, csCoords.x0, rgbStr);
+        updatePicker(picker1, csCoords.x1, specRgb);
       }
 
       function updateColorHex(x0) {
@@ -131,8 +132,7 @@
 
       function getCanvasRgb(ctx, cvX, cvY) {
         var pixel = ctx.getImageData(cvX, cvY, 1, 1);
-        var data = pixel.data.slice(0, -1);
-        return data;
+        return pixel.data.slice(0, -1);
       }
 
       function grdColorStops(rgb) {
@@ -149,34 +149,24 @@
         ctx.fillStyle = grd;
         ctx.fillRect(0, 0, width, height);
       }
-      function updatePicker(picker, x, rgbStr) {
-        picker.style.left = x - pickerRadius + 'px';
+      function updatePicker(picker, cvX, rgbStr) {
+        picker.style.left = cvX - pickerRadius + 'px';
         picker.style.background = rgbStr;
       }
       /**
        * Turn absolute screen x to canvas relative x
-       * @param {Canvas} canvas canvas element
        * @param {Number} x absolute coordinate
        * @return {Number} x relative to given canvas
        */
-      function cvX(canvas, x) { return x - canvas.offsetLeft; }
-      /**
-       * Opposite of cvX, convert canvas coords to screen coords
-       */
-      function absX(canvas, x) { return x + canvas.offsetLeft; }
+      function cvX(x) { return x - csContainer.offsetLeft; }
 
       /**
-       * Give canvas a boundary for drag, pan event coords, x or y
-       * @param {Canvas} canvas - specify which canvas
-       * @param {Number} coord - x or y coord from an event
-       * @param {String} upper - canvas property e.g. 'offsetLeft'
-       * @param {String} lower - custom canvas property e.g. 'offsetRight'
-       * @return {Number} coord - a coord that's within the given canvas
+       * Give canvas a boundary for drag, pan event
+       * @param {Number} x coord from an event
+       * @return {Number} x coord - a coord that's within color slider width
        */
-      function bound(canvas, coord, upper, lower) {
-        if (coord < canvas[upper]) coord = canvas[upper];
-        else if (coord >= canvas[lower]) coord = canvas[lower]-1;
-        return coord;
+      function bound(x) {
+        return x < 0 ? 0 : x >= csWidth ? csWidth - 1 : x;
       }
 
       /**
@@ -257,22 +247,20 @@
       hm.on('pan', csHandleSlider);
 
       function grdSliderEvent(e) {
-        var x = bound(cv0, e.center.x, 'offsetLeft', 'offsetRight');
-        var canvasX = cvX(cv0, x);
-        var rgbStr = updateColorHex(canvasX);
+        var x = bound(cvX(e.center.x));
+        var rgbStr = updateColorHex(x);
         updatePicker(picker0, x, rgbStr);
         scope.$apply();
-        if (e.isFinal) csCoords.x0 = canvasX;
+        if (e.isFinal) csCoords.x0 = x;
       }
 
       function specSliderEvent(e) {
-        var x = bound(cv1, e.center.x, 'offsetLeft', 'offsetRight');
-        var canvasX = cvX(cv1, x);
-        var specRgb = renderBrightnessSlider(canvasX);
+        var x = bound(cvX(e.center.x));
+        var specRgb = renderBrightnessSlider(x);
         updatePicker(picker1, x, specRgb);
         picker0.style.background = updateColorHex(csCoords.x0);
         scope.$apply();
-        if (e.isFinal) csCoords.x1 = canvasX;
+        if (e.isFinal) csCoords.x1 = x;
       }
 
       function csHandleSlider(e) {
