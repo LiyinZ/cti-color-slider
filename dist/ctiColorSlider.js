@@ -249,8 +249,8 @@
       hm.on('tap', csHandleSlider);
       hm.on('pan', csHandleSlider);
 
-      function grdSliderEvent(e) {
-        var x = bound(cvX(e.center.x));
+      function grdSliderEvent(e, x) {
+        x = x || bound(cvX(e.center.x));
         var rgbStr = updateColorData(x);
         updatePicker(picker0, x, rgbStr);
         scope.$apply();
@@ -267,6 +267,7 @@
       }
 
       function csHandleSlider(e) {
+        if (e.tapCount == 2) return grdSliderEvent(e, csWidth/2);
         switch(e.target.id) {
           case 'cs-canvas-1':
           case 'cti-picker-1':
