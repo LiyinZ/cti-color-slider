@@ -117,7 +117,7 @@
 
 
       function setSliderCoords(color) {
-        var rgb = type == 'hex' ? hexToRgb(color) : color;
+        var rgb = type == 'hex' ? hexToRgb(color) : rgbStrToRgb(color);
         var ratios = rgbToSlidersRatio(rgb);
         csCoords.x1 = ratioToPos(cv1, ratios[1]);
         csCoords.x0 = ratioToPos(cv0, ratios[0]);
@@ -237,7 +237,9 @@
       function rgbToStr(rgb) { return 'rgb(' + rgb.join() + ')'; }
 
       function rgbStrToRgb(rgbStr) {
-
+        return rgbStr.match(/\d+/g).map(function(n) {
+          return parseInt(n);
+        });
       }
 
       /**
