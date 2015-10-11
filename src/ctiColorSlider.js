@@ -48,12 +48,11 @@
       var csContainer = element[0];
       var cv0 = csContainer.children[0].children[0];
       var cv1 = csContainer.children[1].children[0];
-      var csWidth = cv0.clientWidth; // width is defined in CSS
-      var csHeight = cv0.clientHeight;
+      var csWidth = csContainer.clientWidth; // width is container width in CSS
+      var csHeight = cv0.clientHeight; // slider height is defined in css
       var picker0 = csContainer.children[2];
       var picker1 = csContainer.children[3];
       var pickerRadius = picker0.offsetWidth/2; // radius, half width
-      var colorDisplay = document.getElementById('cs-color-display');
       var ctx0 = cv0.getContext('2d');
       var ctx1 = cv1.getContext('2d');
       var specColorStops = [
@@ -66,8 +65,7 @@
         [1, 'rgb(255,0,0)']
       ];
       var csCoords = {};
-      cv0.width = cv1.width = csWidth; // slider width defined by container width
-      cv0.height = cv1.height = csHeight;
+      cv0.height = cv1.height = csHeight; // this sets both canvas height
       cv0.offsetRight = cv0.offsetLeft + cv0.width;
       cv1.offsetRight = cv1.offsetLeft + cv1.width;
       var hexToR = hexToFn(0, 2);
@@ -123,8 +121,8 @@
       }
 
       function randSliderCoords() {
-        csCoords.x1 = getRandomInt(0, cv1.width);
-        csCoords.x0 = getRandomInt(0, cv0.width);
+        csCoords.x1 = getRandomInt(0, csWidth);
+        csCoords.x0 = getRandomInt(0, csWidth);
       }
 
       function getRandomInt(min, max) {
@@ -155,7 +153,6 @@
         picker.style.left = x - pickerRadius + 'px';
         picker.style.background = rgbStr;
       }
-      function displayColor(color) { colorDisplay.style.background = color; }
       /**
        * Turn absolute screen x to canvas relative x
        * @param {Canvas} canvas canvas element
