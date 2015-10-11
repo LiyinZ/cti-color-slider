@@ -56,13 +56,13 @@
       var ctx0 = cv0.getContext('2d');
       var ctx1 = cv1.getContext('2d');
       var specColorStops = [
-        [0, 'rgb(255,0,0)'],
-        [1/6, 'rgb(255,0,255)'],
-        [2/6, 'rgb(0,0,255)'],
-        [3/6, 'rgb(0,255,255)'],
-        [4/6, 'rgb(0,255,0)'],
-        [5/6, 'rgb(255,255,0)'],
-        [1, 'rgb(255,0,0)']
+        [0,   '#F00'],
+        [1/6, '#F0F'],
+        [2/6, '#00F'],
+        [0.5, '#0FF'],
+        [4/6, '#0F0'],
+        [5/6, '#FF0'],
+        [1,   '#F00']
       ];
       var csCoords = {};
       cv0.height = cv1.height = csHeight; // this sets both canvas height
@@ -251,7 +251,7 @@
         var rgbStr = updateColorHex(x);
         updatePicker(picker0, x, rgbStr);
         scope.$apply();
-        if (e.isFinal) csCoords.x0 = x;
+        csCoords.x0 = x;
       }
 
       function specSliderEvent(e) {

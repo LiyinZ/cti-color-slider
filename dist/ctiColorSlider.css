@@ -27,6 +27,7 @@
   height: 16px;
   width: 16px;
   border: 2px solid #fff;
+  cursor: move;
   opacity: 0;
   -webkit-transition: opacity .5s;
           transition: opacity .5s;
