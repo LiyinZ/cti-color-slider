@@ -8,13 +8,18 @@
   <link href="test_client/client.css" rel="stylesheet">
 </head>
 <body ng-controller="MainCtrl as main">
-  <div class="cs-color-display"
-       ng-repeat="(key, color) in main.colors"
-       ng-style="{ background: color.hex }"
-       ng-click="main.selectColor(key)"
-  >
+  <div class="app-container">
+    <div class="cs-color-choices">
+      <div class="cs-color-display"
+          ng-repeat="(key, color) in main.colors"
+          ng-style="{ background: color.hex }"
+          ng-click="main.selectColor(key)" >
+      </div>
+    </div>
+    <div class="sliders-container">
+      <div cti-color-slider="main.colorData"></div>
+    </div>
   </div>
-  <div cti-color-slider="main.colorData"></div>
   <!-- bower:js -->
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/hammerjs/hammer.js"></script>

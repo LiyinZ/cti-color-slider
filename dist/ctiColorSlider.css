@@ -1,6 +1,7 @@
 [cti-color-slider] {
   /* modify to change width of color slider, responsive possible */
-  position: relative;
+  position: relative !important;
+  min-width: 300px;
   width: 320px;
   margin: auto;
 }
@@ -8,6 +9,7 @@
 .cti-slider-wrapper {
   /* top, bottom 20+20 = 40px is the minimum recommended size for touch */
   padding: 20px 0;
+  margin: 5px auto;
   width: 100%;
   display: table;
 }

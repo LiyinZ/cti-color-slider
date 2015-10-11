@@ -235,9 +235,7 @@
         return hexVals.charAt((n-n%16)/16) + hexVals.charAt(n%16);
       }
 
-      function rgbToStr(rgb) {
-        return 'rgb(' + rgb.join(',') + ')';
-      }
+      function rgbToStr(rgb) { return 'rgb(' + rgb.join() + ')'; }
 
       /**
        * Init touch events
