@@ -45,6 +45,8 @@
       /**
        * Variables initialization
        */
+      var type = 'useRgb' in attrs ? 'rgb' : 'hex';
+      console.log(type);
       var csContainer = element[0];
       var cv0 = csContainer.children[0].children[0];
       var cv1 = csContainer.children[1].children[0];
@@ -79,7 +81,7 @@
         initSlider();
       });
 
-      scope.$watch('cs.colorData', function(newData) {
+      scope.$watch('cs.colorData', function() {
         updateSlider();
       });
 
@@ -92,18 +94,18 @@
       }
 
       function updateSlider() {
-        if (cs.colorData.hex) setSliderCoords(cs.colorData.hex);
+        if (cs.colorData[type]) setSliderCoords(cs.colorData[type]);
         else randSliderCoords();
         var specRgb = renderBrightnessSlider(csCoords.x1);
-        var rgbStr = cs.colorData.hex || updateColorHex(csCoords.x0);
+        var rgbStr = cs.colorData[type] || updateColorData(csCoords.x0);
         updatePicker(picker0, csCoords.x0, rgbStr);
         updatePicker(picker1, csCoords.x1, specRgb);
       }
 
-      function updateColorHex(x0) {
+      function updateColorData(x0) {
         var rgb = getCanvasRgb(ctx0, x0, 1);
         var rgbStr = rgbToStr(rgb);
-        cs.colorData.hex = rgbToHex(rgb[0], rgb[1], rgb[2], true);
+        cs.colorData[type] = type == 'hex' ? rgbToHex(rgb, true) : rgbStr;
         return rgbStr;
       }
 
@@ -114,8 +116,8 @@
       }
 
 
-      function setSliderCoords(hex) {
-        var rgb = hexToRgb(hex);
+      function setSliderCoords(color) {
+        var rgb = type == 'hex' ? hexToRgb(color) : color;
         var ratios = rgbToSlidersRatio(rgb);
         csCoords.x1 = ratioToPos(cv1, ratios[1]);
         csCoords.x0 = ratioToPos(cv0, ratios[0]);
@@ -222,20 +224,21 @@
         return (h.charAt(0) == "#") ? h.substring(1,7) : h;
       }
 
-      function rgbToHex(R, G, B, sign) {
-        var hex = toHex(R)+toHex(G)+toHex(B);
-        if (sign) hex = '#' + hex;
-        return hex;
+      function rgbToHex(rgb, sign) {
+        var hex = toHex(rgb[0])+toHex(rgb[1])+toHex(rgb[2]);
+        return sign ? '#' + hex : hex;
       }
       // rgbToHex helper
       function toHex(n) {
-        var hexVals = '0123456789ABCDEF';
-        if (isNaN(n)) return '00';
-        n = Math.max(0, Math.min(n, 255));
-        return hexVals.charAt((n-n%16)/16) + hexVals.charAt(n%16);
+        n = parseInt(n).toString(16);
+        return n.length == 1 ? '0' + n : n;
       }
 
       function rgbToStr(rgb) { return 'rgb(' + rgb.join() + ')'; }
+
+      function rgbStrToRgb(rgbStr) {
+
+      }
 
       /**
        * Init touch events
@@ -246,7 +249,7 @@
 
       function grdSliderEvent(e) {
         var x = bound(cvX(e.center.x));
-        var rgbStr = updateColorHex(x);
+        var rgbStr = updateColorData(x);
         updatePicker(picker0, x, rgbStr);
         scope.$apply();
         csCoords.x0 = x;
@@ -256,7 +259,7 @@
         var x = bound(cvX(e.center.x));
         var specRgb = renderBrightnessSlider(x);
         updatePicker(picker1, x, specRgb);
-        picker0.style.background = updateColorHex(csCoords.x0);
+        picker0.style.background = updateColorData(csCoords.x0);
         scope.$apply();
         if (e.isFinal) csCoords.x1 = x;
       }

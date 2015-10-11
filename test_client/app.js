@@ -12,9 +12,9 @@
     var vm = this;
 
     vm.colors = [
-      { hex: '#FFF062' },
-      { hex: '#00E594' },
-      { hex: '#7862FF' }
+      { hex: '#FFF062', rgb: 'rgb(255,141,200)' },
+      { hex: '#00E594', rgb: 'rgb(255,240,98)' },
+      { hex: '#7862FF', rgb: 'rgb(0,169,180)' }
     ];
 
     vm.colorData = vm.colors[0];
