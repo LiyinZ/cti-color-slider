@@ -119,8 +119,8 @@
       function setSliderCoords(color) {
         var rgb = type == 'hex' ? hexToRgb(color) : rgbStrToRgb(color);
         var ratios = rgbToSlidersRatio(rgb);
-        csCoords.x1 = ratioToPos(cv1, ratios[1]);
-        csCoords.x0 = ratioToPos(cv0, ratios[0]);
+        csCoords.x1 = ratioToPos(ratios[1]);
+        csCoords.x0 = ratioToPos(ratios[0]);
       }
 
       function randSliderCoords() {
@@ -177,8 +177,8 @@
        * rgbToSlidersRatio
        * @return {Integer} canvas pixel x position
        */
-      function ratioToPos(canvas, ratio) {
-        return Math.round(ratio * canvas.width);
+      function ratioToPos(ratio) {
+        return bound(Math.round(ratio * csWidth));
       }
       // return [brightness, spectrum]
       function rgbToSlidersRatio(rgb) {
