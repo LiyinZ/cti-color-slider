@@ -1,32 +1,41 @@
 (function() {
   'use strict';
 
-  var demo = angular.module('ctiCpDemo', [ 'ctiColorSlider' ]);
+  var demo = angular.module('ctiCsDemo', ['ctiColorSlider', 'firebase']);
 
   demo.controller('MainCtrl', MainCtrl);
 
-  MainCtrl.$inject = ['$scope'];
+  MainCtrl.$inject = ['$scope', '$firebaseObject'];
 
   /* @ngInject */
-  function MainCtrl($scope) {
+  function MainCtrl($scope, $firebaseObject) {
     var vm = this;
     var MAX_COUNT = 8;
     var MIN_COUNT = 0;
+    var ref = new Firebase('https://cticolorslider.firebaseio.com/');
+    var fb = $firebaseObject(ref);
+    vm.ready = false;
+    vm.colorData = null; // init selected color to first one;
+    vm.disableAdd = vm.disableRm = true;
 
-    vm.colors = [
-      { hex: '#FFF062', rgb: 'rgb(255,141,200)' },
-      { hex: '#00E594', rgb: 'rgb(255,240,98)' },
-      { hex: '#FF0075', rgb: 'rgb(0,169,180)' }
-    ];
-    vm.selected = 0;
-    vm.colorData = vm.colors[0]; // init selected color to first one;
-    vm.disableAdd = maxReached();
-    vm.disableRm = minReached();
+    fb.$loaded()
+      .then(function(data) {
+        vm.colors = data.colors || [];
+        vm.selected = data.selected || 0;
+        vm.colorData = vm.colors[vm.selected];
+        vm.disableAdd = maxReached();
+        vm.disableRm = minReached();
+        vm.ready = true;
+      })
+      .catch(function(error) {
+        console.error('Error', error);
+      });
 
     vm.selectColor = selectColor;
     vm.isSelected = isSelected;
     vm.addColor = addColor;
     vm.removeColor = removeColor;
+    vm.saveColors = saveColors;
 
     function maxReached() {
       return vm.colors.length == MAX_COUNT;
@@ -42,7 +51,7 @@
     }
 
     function selectColor(key) {
-      vm.selected = key;
+      vm.selected = key > -1 ? key : 0;
       vm.colorData = vm.colors[key];
     }
 
@@ -51,6 +60,7 @@
     }
 
     function addColor() {
+      if (!vm.ready) return;
       var count = vm.colors.length;
       if (count >= MAX_COUNT) return;
       vm.colors.push({  rgb: 'rgb(255,0,0)' });
@@ -59,12 +69,24 @@
     }
 
     function removeColor() {
+      if (!vm.ready) return;
       var count = vm.colors.length;
       if (count <= MIN_COUNT) return;
       count = vm.selected == count - 1 ? count - 2 : vm.selected;
       vm.colors.splice(vm.selected, 1);
       vm.selectColor(count);
       setBtnState();
+    }
+
+    function saveColors() {
+      if (!vm.ready) return;
+      fb.colors = vm.colors;
+      fb.selected = vm.selected;
+      fb.$save().then(function(ref) {
+        console.log('Colors saved!');
+      }, function(err) {
+        console.log('Error:', error);
+      });
     }
 
   }
