@@ -1,6 +1,7 @@
 /*----------  General Style  ----------*/
 
 body {
+  font-family: sans-serif;
   background: #555;
 }
 
@@ -41,26 +42,46 @@ body {
   box-shadow: 0 2px 5px 0 rgba(0,0,0,0.37);
 }
 
-.more-or-less {
-  margin-bottom: 10px;
+
+/*----------  Action Buttons  ----------*/
+
+.list-of-btns {
+  margin-bottom: 20px;
   text-align: center;
 }
 
-
-/*----------  Add / Remove buttons  ----------*/
-
-.btn-add,
-.btn-remove {
-  font-size: 24px;
+.btn {
   color: #f7f7f7;
   /* background: #f7f7f7; */
   display: inline-block;
   cursor: pointer;
   width: 50px;
-  padding: 2px 6px;
   border: 1px solid #f7f7f7;
   border-radius: 30px;
-  margin: 0 5px 20px;
+  margin: auto 5px;
+  vertical-align: middle;
+}
+
+.btn-save {
+  padding: 7px 10px;
+  border-color: #e67777;
+  color: #f7f7f7;
+  background: #e67777;
+}
+.btn-save:hover,
+.btn-save:focus {
+  background: #ff9191;
+  border-color: #ff9191;
+}
+.btn-save:active {
+  color: #607d8b;
+  background: #e68585;
+}
+
+.btn-add,
+.btn-remove {
+  padding: 2px 6px;
+  font-size: 24px;
 }
 .btn-add:hover,
 .btn-remove:hover,
