@@ -92,6 +92,8 @@ gulp.task('demo', ['client'], function() {
     .pipe(gulp.dest('./demo'));
   return gulp.src('./test_client/index.html')
     .pipe(replace('dist', '/cti-color-slider/dist'))
+    .pipe(replace('Slider.css', 'Slider.min.css'))
+    .pipe(replace('Slider.js', 'Slider.min.js'))
     .pipe(cdnizer([
       'google:angular',
       {
