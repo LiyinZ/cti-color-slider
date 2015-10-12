@@ -93,10 +93,12 @@
       }
 
       function updateSlider() {
-        if (cs.colorData[type]) setSliderCoords(cs.colorData[type]);
+        if (!cs.colorData) csCoords.x0 = csCoords.x1 = 0;
+        else if (cs.colorData[type]) setSliderCoords(cs.colorData[type]);
         else randSliderCoords();
         var specRgb = renderBrightnessSlider(csCoords.x1);
-        var rgbStr = cs.colorData[type] || updateColorData(csCoords.x0);
+        var rgbStr = cs.colorData && cs.colorData[type] ?
+          cs.colorData[type] : updateColorData(csCoords.x0);
         updatePicker(picker0, csCoords.x0, rgbStr);
         updatePicker(picker1, csCoords.x1, specRgb);
       }
@@ -104,7 +106,8 @@
       function updateColorData(x0) {
         var rgb = getCanvasRgb(ctx0, x0, 1);
         var rgbStr = rgbToStr(rgb);
-        cs.colorData[type] = type == 'hex' ? rgbToHex(rgb, true) : rgbStr;
+        if (cs.colorData)
+          cs.colorData[type] = type == 'hex' ? rgbToHex(rgb, true) : rgbStr;
         return rgbStr;
       }
 

@@ -11,7 +11,7 @@
   function MainCtrl($scope) {
     var vm = this;
     var MAX_COUNT = 8;
-    var MIN_COUNT = 1;
+    var MIN_COUNT = 0;
 
     vm.colors = [
       { hex: '#FFF062', rgb: 'rgb(255,141,200)' },
