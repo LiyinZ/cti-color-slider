@@ -20,7 +20,8 @@
     <div class="more-or-less">
       <a class="btn-add" ng-click="vm.addColor()"
                          ng-class="{ 'btn-disabled': vm.disableAdd }">+</a>
-      <a class="btn-remove">-</a>
+      <a class="btn-remove" ng-click="vm.removeColor()"
+                            ng-class="{ 'btn-disabled': vm.disableRm }">-</a>
     </div>
     <div class="sliders-container">
       <div cti-color-slider="vm.colorData"></div>

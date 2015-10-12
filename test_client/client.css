@@ -12,6 +12,10 @@ body {
   margin: auto;
   background: #607d8b;
   border-radius: 2px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
   /* transform: translateY(50%); */
 }
 

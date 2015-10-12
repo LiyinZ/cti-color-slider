@@ -11,6 +11,7 @@
   function MainCtrl($scope) {
     var vm = this;
     var MAX_COUNT = 8;
+    var MIN_COUNT = 1;
 
     vm.colors = [
       { hex: '#FFF062', rgb: 'rgb(255,141,200)' },
@@ -20,10 +21,25 @@
     vm.selected = 0;
     vm.colorData = vm.colors[0]; // init selected color to first one;
     vm.disableAdd = maxReached();
+    vm.disableRm = minReached();
 
     vm.selectColor = selectColor;
     vm.isSelected = isSelected;
     vm.addColor = addColor;
+    vm.removeColor = removeColor;
+
+    function maxReached() {
+      return vm.colors.length == MAX_COUNT;
+    }
+
+    function minReached() {
+      return vm.colors.length == MIN_COUNT;
+    }
+
+    function setBtnState() {
+      vm.disableAdd = maxReached();
+      vm.disableRm = minReached();
+    }
 
     function selectColor(key) {
       vm.selected = key;
@@ -37,13 +53,18 @@
     function addColor() {
       var count = vm.colors.length;
       if (count >= MAX_COUNT) return;
-      vm.colors.push({ hex: '#ffffff', rgb: 'rgb(60,60,60)' });
-      vm.disableAdd = maxReached();
+      vm.colors.push({  rgb: 'rgb(255,0,0)' });
       vm.selectColor(count);
+      setBtnState();
     }
 
-    function maxReached() {
-      return vm.colors.length == MAX_COUNT;
+    function removeColor() {
+      var count = vm.colors.length;
+      if (count <= MIN_COUNT) return;
+      count = vm.selected == count - 1 ? count - 2 : vm.selected;
+      vm.colors.splice(vm.selected, 1);
+      vm.selectColor(count);
+      setBtnState();
     }
 
   }
