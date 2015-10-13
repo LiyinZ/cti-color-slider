@@ -9,12 +9,13 @@
   "authors": [
     "Liyin Zhang <slevinz@outlook.com>"
   ],
-  "description": "Minimalistic, mobile touch friendly color slider angular directive",
+  "description": "Minimalistic, mobile touch friendly color picker slider angular directive",
   "main": "dist/ctiColorSlider.js",
   "keywords": [
     "angular",
     "directive",
     "color",
+    "picker",
     "slider",
     "minimal"
   ],
