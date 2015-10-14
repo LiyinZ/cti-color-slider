@@ -261,6 +261,7 @@
       hm.on('pan', csHandleSlider);
 
       function grdSliderEvent(e, x) {
+        cs.active = 1;
         x = x || bound(cvX(e.center.x));
         var rgbStr = updateColorData(x);
         updatePicker(picker0, x, rgbStr);
@@ -270,6 +271,7 @@
       }
 
       function specSliderEvent(e) {
+        cs.active = 2;
         var x = bound(cvX(e.center.x));
         var specRgb = renderBrightnessSlider(x);
         updatePicker(picker1, x, specRgb);
@@ -288,13 +290,11 @@
           case 'cs-canvas-1':
           case 'cti-picker-1':
           case 'cti-slider-1':
-            cs.active = 1;
             grdSliderEvent(e);
             break;
           case 'cs-canvas-2':
           case 'cti-picker-2':
           case 'cti-slider-2':
-            cs.active = 2;
             specSliderEvent(e);
             break;
           default:
