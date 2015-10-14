@@ -1,6 +1,6 @@
 {
   "name": "ctiColorSlider",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "angular": ">=1.2.0",
     "hammerjs": ">=2.0.0"

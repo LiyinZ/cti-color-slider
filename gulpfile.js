@@ -105,5 +105,5 @@ gulp.task('demo', ['client'], function() {
     .pipe(gulp.dest('./demo'));
 });
 
-gulp.task('dist', ['uglify', 'minify']);
+gulp.task('dist', ['uglify', 'minify', 'demo']);
 gulp.task('default', ['serve']);
