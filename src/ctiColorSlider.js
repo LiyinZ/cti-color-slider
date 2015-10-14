@@ -51,9 +51,15 @@
       var cv1 = csContainer.children[1].children[0];
       var csWidth = csContainer.clientWidth; // width is container width in CSS
       var csHeight = cv0.clientHeight; // slider height is defined in css
-      var picker0 = csContainer.children[2];
-      var picker1 = csContainer.children[3];
-      var pickerRadius = picker0.offsetWidth/2; // radius, half width
+      var picker0 = {
+        wrap: csContainer.children[2],
+        knob: csContainer.children[2].children[0]
+      };
+      var picker1 = {
+        wrap: csContainer.children[3],
+        knob: csContainer.children[3].children[0]
+      };
+      var pickerRadius = picker0.wrap.offsetWidth/2; // radius, half width
       var ctx0 = cv0.getContext('2d');
       var ctx1 = cv1.getContext('2d');
       var specColorStops = [
@@ -77,6 +83,7 @@
        * Color slider interface initialization
        */
       angular.element(document).ready(function() {
+        cs.active = 0;
         initSlider();
       });
 
@@ -85,10 +92,11 @@
       });
 
       function initSlider() {
+        // console.log(picker0.wrap);
         renderLinearGrdSlider(ctx1, csWidth, csHeight, specColorStops);
-        picker0.style.top = cv0.offsetTop - pickerRadius+2 + 'px';
-        picker1.style.top = cv1.offsetTop - pickerRadius+2 + 'px';
-        picker0.style.opacity = picker1.style.opacity = 1;
+        picker0.wrap.style.top = cv0.offsetTop - pickerRadius+2 + 'px';
+        picker1.wrap.style.top = cv1.offsetTop - pickerRadius+2 + 'px';
+        picker0.wrap.style.opacity = picker1.wrap.style.opacity = 1;
         updateSlider();
       }
 
@@ -154,8 +162,8 @@
         ctx.fillRect(0, 0, width, height);
       }
       function updatePicker(picker, cvX, rgbStr) {
-        picker.style.left = cvX - pickerRadius + 'px';
-        picker.style.background = rgbStr;
+        picker.wrap.style.left = cvX - pickerRadius + 'px';
+        picker.knob.style.background = rgbStr;
       }
       /**
        * Turn absolute screen x to canvas relative x
@@ -256,30 +264,37 @@
         x = x || bound(cvX(e.center.x));
         var rgbStr = updateColorData(x);
         updatePicker(picker0, x, rgbStr);
-        scope.$apply();
         csCoords.x0 = x;
+        if (e.isFinal) cs.active = 0;
+        scope.$apply();
       }
 
       function specSliderEvent(e) {
         var x = bound(cvX(e.center.x));
         var specRgb = renderBrightnessSlider(x);
         updatePicker(picker1, x, specRgb);
-        picker0.style.background = updateColorData(csCoords.x0);
+        picker0.knob.style.background = updateColorData(csCoords.x0);
+        if (e.isFinal) {
+          csCoords.x1 = x;
+          cs.active = 0;
+        }
         scope.$apply();
-        if (e.isFinal) csCoords.x1 = x;
       }
 
       function csHandleSlider(e) {
+        // double tap to center top slider
         if (e.tapCount == 2) return grdSliderEvent(e, csWidth/2);
         switch(e.target.id) {
           case 'cs-canvas-1':
           case 'cti-picker-1':
           case 'cti-slider-1':
+            cs.active = 1;
             grdSliderEvent(e);
             break;
           case 'cs-canvas-2':
           case 'cti-picker-2':
           case 'cti-slider-2':
+            cs.active = 2;
             specSliderEvent(e);
             break;
           default:
