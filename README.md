@@ -1,6 +1,9 @@
+## Live Demo
+[link](http://liyinz.github.io/cti-color-slider/demo/)
+
 ## How to Use
 
-`bower install cti-color-slider --save`
+`bower install ctiColorSlider --save`
 
 Include `ctiColorSlider` in your angular dependency array, as demonstrated in
 [demo/app.js](demo/app.js).
