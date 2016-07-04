@@ -1,5 +1,5 @@
 ## Live Demo
-[link](http://liyinz.github.io/cti-color-slider/demo/)
+[link](https://liyinz.github.io/cti-color-slider/demo/)
 
 ## How to Use
 
